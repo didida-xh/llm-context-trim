@@ -1,0 +1,28 @@
+# LiteLLM Proxy 配置：把上游模型挂成统一别名的网关
+# 启动：LITELLM_LOCAL_MODEL_COST_MAP=True litellm --config litellm/config.yaml --port 4000
+# 测试：curl http://localhost:4000/chat/completions -d '{"model": "chat-main", ...}'
+
+model_list:
+  # 主力：DeepSeek 官方。业务代码只认 chat-main 这个别名
+  - model_name: chat-main
+    litellm_params:
+      model: deepseek/deepseek-chat
+      api_key: os.environ/DEEPSEEK_API_KEY   # os.environ/ 前缀 = 从环境变量读，密钥不落盘
+
+  # 备用：百炼 OpenAI 兼容口。主模型故障时自动接管
+  - model_name: chat-backup
+    litellm_params:
+      model: openai/qwen-plus
+      api_base: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api_key: os.environ/DASHSCOPE_API_KEY
+
+router_settings:
+  # chat-main 请求失败 → 自动换 chat-backup 重发（供应商级故障切换）
+  fallbacks:
+    - chat-main: ["chat-backup"]
+  # 先在当前模型上重试 1 次解瞬时抖动，还不行才触发 fallback（重试与降级不叠加）
+  num_retries: 1
+
+litellm_settings:
+  # 上游不认识的参数直接丢弃而不是报错（qwen 不支持某些 OpenAI 参数时兜底）
+  drop_params: true

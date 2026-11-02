@@ -1,0 +1,6 @@
+# 运行环境：python3.9（.venv）
+litellm==1.83.9
+tiktoken==0.12.0
+redis==7.0.1
+psycopg2-binary==2.9.12
+python-dotenv==1.0.1

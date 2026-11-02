@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>多轮会话上下文裁剪 · 成本看板</title>
+<style>
+  body { font-family: -apple-system, sans-serif; margin: 32px; color: #1a1a2e; }
+  h1 { font-size: 22px; }
+  .cards { display: flex; gap: 16px; margin: 20px 0; }
+  .card { flex: 1; border: 1px solid #e0e0e0; border-radius: 10px;
+          padding: 16px; text-align: center; }
+  .num { font-size: 28px; font-weight: 700; color: #0f62fe; }
+  .label { font-size: 12px; color: #666; margin-top: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { border: 1px solid #ddd; padding: 5px 8px; text-align: right; }
+  th { background: #f4f6f8; }
+  tr.dead td { color: #b00; background: #fff5f5; }
+  .note { font-size: 12px; color: #888; margin-top: 14px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<h1>多轮会话上下文裁剪 · 成本看板（main_001_trimmed vs 基线）</h1>
+<div class="cards"><div class="card"><div class="num">70.2%</div><div class="label">第 30 轮 token 降幅（验收口径）</div></div><div class="card"><div class="num">10.5%</div><div class="label">前 20 轮同段成本节省（真实口径）</div></div><div class="card"><div class="num">10 / 30</div><div class="label">基线超窗轮次</div></div><div class="card"><div class="num">0 / 30</div><div class="label">裁剪超窗轮次</div></div></div>
+<table>
+<tr><th>轮次</th><th>全量 token</th><th>裁剪 token</th><th>降幅</th>
+    <th>全量轮成本</th><th>全量累计</th>
+    <th>裁剪轮成本</th><th>裁剪累计</th><th>节省</th></tr>
+<tr><td>1</td><td>130</td><td>130</td><td>0.0%</td><td>0.000038</td><td>0.000038</td><td>0.000044</td><td>0.000044</td><td>-0.000006</td></tr><tr><td>2</td><td>384</td><td>384</td><td>0.0%</td><td>0.000108</td><td>0.000146</td><td>0.000140</td><td>0.000184</td><td>-0.000038</td></tr><tr><td>3</td><td>664</td><td>664</td><td>0.0%</td><td>0.000186</td><td>0.000332</td><td>0.000218</td><td>0.000402</td><td>-0.000070</td></tr><tr><td>4</td><td>938</td><td>938</td><td>0.0%</td><td>0.000265</td><td>0.000597</td><td>0.000322</td><td>0.000724</td><td>-0.000127</td></tr><tr><td>5</td><td>1187</td><td>1187</td><td>0.0%</td><td>0.000334</td><td>0.000931</td><td>0.000379</td><td>0.001103</td><td>-0.000172</td></tr><tr><td>6</td><td>1468</td><td>1468</td><td>0.0%</td><td>0.000412</td><td>0.001343</td><td>0.000438</td><td>0.001541</td><td>-0.000198</td></tr><tr><td>7</td><td>1741</td><td>1741</td><td>0.0%</td><td>0.000489</td><td>0.001832</td><td>0.000530</td><td>0.002071</td><td>-0.000239</td></tr><tr><td>8</td><td>1991</td><td>1991</td><td>0.0%</td><td>0.000558</td><td>0.002390</td><td>0.000585</td><td>0.002656</td><td>-0.000266</td></tr><tr><td>9</td><td>2263</td><td>2214</td><td>2.2%</td><td>0.000634</td><td>0.003024</td><td>0.000668</td><td>0.003324</td><td>-0.000300</td></tr><tr><td>10</td><td>2531</td><td>2362</td><td>6.7%</td><td>0.000710</td><td>0.003734</td><td>0.000853</td><td>0.004177</td><td>-0.000443</td></tr><tr><td>11</td><td>2777</td><td>2363</td><td>14.9%</td><td>0.000778</td><td>0.004512</td><td>0.000916</td><td>0.005093</td><td>-0.000581</td></tr><tr><td>12</td><td>3051</td><td>2386</td><td>21.8%</td><td>0.000856</td><td>0.005369</td><td>0.000922</td><td>0.006015</td><td>-0.000646</td></tr><tr><td>13</td><td>3322</td><td>2408</td><td>27.5%</td><td>0.000932</td><td>0.006301</td><td>0.000949</td><td>0.006964</td><td>-0.000663</td></tr><tr><td>14</td><td>3576</td><td>2394</td><td>33.1%</td><td>0.001003</td><td>0.007304</td><td>0.000922</td><td>0.007886</td><td>-0.000582</td></tr><tr><td>15</td><td>3856</td><td>2321</td><td>39.8%</td><td>0.001081</td><td>0.008385</td><td>0.000913</td><td>0.008799</td><td>-0.000414</td></tr><tr><td>16</td><td>4130</td><td>2345</td><td>43.2%</td><td>0.001160</td><td>0.009544</td><td>0.000889</td><td>0.009688</td><td>-0.000144</td></tr><tr><td>17</td><td>4379</td><td>2348</td><td>46.4%</td><td>0.001229</td><td>0.010773</td><td>0.000903</td><td>0.010591</td><td>0.000182</td></tr><tr><td>18</td><td>4660</td><td>2382</td><td>48.9%</td><td>0.001307</td><td>0.012080</td><td>0.000891</td><td>0.011482</td><td>0.000598</td></tr><tr><td>19</td><td>4933</td><td>2427</td><td>50.8%</td><td>0.001383</td><td>0.013463</td><td>0.000917</td><td>0.012399</td><td>0.001064</td></tr><tr><td>20</td><td>5183</td><td>2427</td><td>53.2%</td><td>0.001453</td><td>0.014916</td><td>0.000955</td><td>0.013354</td><td>0.001562</td></tr><tr class="dead"><td>21</td><td>5455</td><td>2523</td><td>53.8%</td><td>超窗</td><td>0.014916</td><td>0.001059</td><td>0.014413</td><td>—</td></tr><tr class="dead"><td>22</td><td>5723</td><td>2490</td><td>56.5%</td><td>超窗</td><td>0.014916</td><td>0.001054</td><td>0.015467</td><td>—</td></tr><tr class="dead"><td>23</td><td>5969</td><td>2483</td><td>58.4%</td><td>超窗</td><td>0.014916</td><td>0.001057</td><td>0.016524</td><td>—</td></tr><tr class="dead"><td>24</td><td>6243</td><td>2507</td><td>59.8%</td><td>超窗</td><td>0.014916</td><td>0.001085</td><td>0.017609</td><td>—</td></tr><tr class="dead"><td>25</td><td>6514</td><td>2603</td><td>60.0%</td><td>超窗</td><td>0.014916</td><td>0.001151</td><td>0.018760</td><td>—</td></tr><tr class="dead"><td>26</td><td>6768</td><td>2465</td><td>63.6%</td><td>超窗</td><td>0.014916</td><td>0.001085</td><td>0.019845</td><td>—</td></tr><tr class="dead"><td>27</td><td>7048</td><td>2483</td><td>64.8%</td><td>超窗</td><td>0.014916</td><td>0.001058</td><td>0.020903</td><td>—</td></tr><tr class="dead"><td>28</td><td>7322</td><td>2513</td><td>65.7%</td><td>超窗</td><td>0.014916</td><td>0.001042</td><td>0.021945</td><td>—</td></tr><tr class="dead"><td>29</td><td>7571</td><td>2488</td><td>67.1%</td><td>超窗</td><td>0.014916</td><td>0.001068</td><td>0.023013</td><td>—</td></tr><tr class="dead"><td>30</td><td>7590</td><td>2262</td><td>70.2%</td><td>超窗</td><td>0.014916</td><td>0.000985</td><td>0.023998</td><td>—</td></tr>
+</table>
+<p class="note">
+  口径说明：全量侧成本 = 实测输入 token × 输入单价 $0.28/M（输出两侧相当，不计入）；
+  裁剪侧为完整口径（实测输入 + 输出 + 分摊的摘要费用）。<br>
+  红色行 = 基线超窗失败轮次：该方案自第 21 轮起无法继续，成本累计冻结于第 20 轮。
+  "节省"列在超窗行显示 —，因为对方已弃赛。
+</p>
+</body>
+</html>

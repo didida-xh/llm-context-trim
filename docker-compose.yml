@@ -1,0 +1,64 @@
+# 项目二 · 标准部署形态：LiteLLM Proxy + Redis + PostgreSQL 三服务编排
+#
+# 本机开发时的实际形态（见踩坑记录 D5）：
+#   Redis 6379 / PostgreSQL 5433 源码编译安装 + pip 直跑 litellm proxy
+# 本文件展示等价的容器化一键部署：
+#   cp .env.example .env 并填好密钥后，docker compose up -d 一条命令拉起全套
+#
+# 关键设计：
+#   - 密钥经 ${...} 从 .env 注入容器，不写死在任何被提交的文件里
+#   - healthcheck + depends_on: proxy 必须等 redis 真正可用才启动（启动顺序不靠猜）
+#   - pgdata 具名卷：容器销毁重建，账本数据不丢
+
+services:
+  # 统一网关：模型别名 / fallbacks / 记账都由它承担（配置见 litellm/config.yaml）
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    environment:
+      LITELLM_LOCAL_MODEL_COST_MAP: "True"
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health/liveliness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # D3 摘要缓存：summary:{session_id}:{offset}，TTL 7 天
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # D4 成本账本：sessions / turns / summaries 三表，端口映射到宿主机 5433（避开默认 5432）
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: pgadmin
+      POSTGRES_DB: agentboard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgadmin}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgadmin -d agentboard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
